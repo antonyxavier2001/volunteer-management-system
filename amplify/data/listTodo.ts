@@ -1,4 +1,3 @@
-import { MongoClient, ObjectId } from 'mongodb';
 import type { AppSyncIdentityCognito } from 'aws-lambda';
 import { connectToMongodb } from './mdbUtils';
 
