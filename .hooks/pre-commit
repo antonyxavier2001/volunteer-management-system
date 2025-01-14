@@ -2,6 +2,12 @@
 set -euo pipefail
 shopt -s inherit_errexit
 
+# Prevent committing to main
+if [ "$(git rev-parse --abbrev-ref HEAD)" == "main" ]; then
+  echo "You cannot commit directly to main. Please create a branch and open a pull request."
+  exit 1
+fi
+
 HOOKS_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 DIR="$(dirname "$HOOKS_DIR")"
 cd $DIR
