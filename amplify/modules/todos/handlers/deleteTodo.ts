@@ -1,10 +1,10 @@
 import type { AppSyncIdentityCognito } from 'aws-lambda';
 
-import type { Schema } from './resource';
-import { connectToMongodb } from './mdbUtils';
+import type { Schema } from '@/modules/todos/resource';
+import { connectToMongodb } from '@/shared/mdbUtils';
 import { ObjectId } from 'mongodb';
 
-function successResponse(body: any): object {
+function successResponse(body: unknown): object {
 	return {
 		statusCode: 200,
 		count: body,
@@ -21,10 +21,7 @@ function errorResponse(err: Error): object {
 	};
 }
 
-export const handler: Schema['addTodo']['functionHandler'] = async (
-	event,
-	context,
-) => {
+export const handler: Schema['addTodo']['functionHandler'] = async (event) => {
 	// console.log("got event: " + JSON.stringify(event));
 	// console.log("got context: " + JSON.stringify(context));
 	// Connect to MongoDB

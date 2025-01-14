@@ -1,9 +1,9 @@
 import type { AppSyncIdentityCognito } from 'aws-lambda';
 import { ObjectId } from 'mongodb';
-import type { Schema } from './resource';
-import { connectToMongodb } from './mdbUtils';
+import type { Schema } from '@/modules/todos/resource';
+import { connectToMongodb } from '@/shared/mdbUtils';
 
-function successResponse(body: any): object {
+function successResponse(body: unknown): object {
 	return {
 		statusCode: 200,
 		count: body,
@@ -21,7 +21,6 @@ function errorResponse(err: Error): object {
 }
 export const handler: Schema['updateTodo']['functionHandler'] = async (
 	event,
-	context,
 ) => {
 	console.log('got event: ' + JSON.stringify(event));
 	// console.log("got context: " + JSON.stringify(context));

@@ -1,11 +1,11 @@
 import type { AppSyncIdentityCognito } from 'aws-lambda';
-import { connectToMongodb } from './mdbUtils';
+import { connectToMongodb } from '@/shared/mdbUtils';
 
-import type { Schema } from './resource';
+import type { Schema } from '@/modules/todos/resource';
 
 // type TodoList = Schema["listTodo"]['functionHandler'];
 
-function successResponse(body: any): object {
+function successResponse(body: unknown): object {
 	return {
 		statusCode: 200,
 		todoList: body,
@@ -33,11 +33,9 @@ export const handler: Schema['listTodo']['functionHandler'] = async (
 		if ((event.identity as AppSyncIdentityCognito).username)
 			user = (event.identity as AppSyncIdentityCognito).username;
 
-		let response: any;
-
 		const payload = { username: user };
 		console.log('retrieving results');
-		response = await collection.find(payload).toArray();
+		const response = await collection.find(payload).toArray();
 		console.log(`results retrieved: ${JSON.stringify(response)}`);
 
 		return successResponse(response);
