@@ -1,13 +1,12 @@
 import type { AppSyncIdentityCognito } from 'aws-lambda';
 
-import type { Schema } from './resource';
-import { connectToMongodb } from './mdbUtils';
-import { ObjectId } from 'mongodb';
+import type { Schema } from '@/data/resource';
+import { connectToMongodb } from '@/shared/mdbUtils';
 
-function successResponse(body: any): object {
+function successResponse(body: unknown): object {
 	return {
 		statusCode: 200,
-		count: body,
+		todo: body,
 	};
 }
 function errorResponse(err: Error): object {
@@ -20,13 +19,10 @@ function errorResponse(err: Error): object {
 		},
 	};
 }
-
-export const handler: Schema['addTodo']['functionHandler'] = async (
-	event,
-	context,
-) => {
+export const handler: Schema['addTodo']['functionHandler'] = async (event) => {
 	// console.log("got event: " + JSON.stringify(event));
 	// console.log("got context: " + JSON.stringify(context));
+
 	// Connect to MongoDB
 	const [client, , collection] = await connectToMongodb();
 	try {
@@ -35,16 +31,11 @@ export const handler: Schema['addTodo']['functionHandler'] = async (
 		if ((event.identity as AppSyncIdentityCognito).username)
 			user = (event.identity as AppSyncIdentityCognito).username;
 
-		const id = event.arguments._id!;
+		const payload = { content: event.arguments.content, username: user };
+		const insertResult = await collection.insertOne(payload);
+		const todo = { _id: insertResult.insertedId.toString(), ...payload };
 
-		// delete where object id and user match
-		const deleteResult = await collection.deleteOne({
-			_id: new ObjectId(id),
-			username: user,
-		});
-		// response = { deleted_count: deleteResult.deletedCount };
-
-		return successResponse(deleteResult);
+		return successResponse(todo);
 	} catch (e) {
 		return errorResponse(e as Error);
 	} finally {

@@ -1,14 +1,12 @@
 import type { AppSyncIdentityCognito } from 'aws-lambda';
-import { connectToMongodb } from './mdbUtils';
+import { ObjectId } from 'mongodb';
+import type { Schema } from '@/data/resource';
+import { connectToMongodb } from '@/shared/mdbUtils';
 
-import type { Schema } from './resource';
-
-// type TodoList = Schema["listTodo"]['functionHandler'];
-
-function successResponse(body: any): object {
+function successResponse(body: unknown): object {
 	return {
 		statusCode: 200,
-		todoList: body,
+		count: body,
 	};
 }
 function errorResponse(err: Error): object {
@@ -16,32 +14,32 @@ function errorResponse(err: Error): object {
 	return {
 		statusCode: 400,
 		body: errorMessage,
+		headers: {
+			'Content-Type': 'application/json',
+		},
 	};
 }
-export const handler: Schema['listTodo']['functionHandler'] = async (
+export const handler: Schema['updateTodo']['functionHandler'] = async (
 	event,
-	context,
 ) => {
 	console.log('got event: ' + JSON.stringify(event));
-	console.log('got context: ' + JSON.stringify(context));
+	// console.log("got context: " + JSON.stringify(context));
 	// Connect to MongoDB
 	const [client, , collection] = await connectToMongodb();
-
 	try {
 		console.log('Connected to MongoDB');
 		let user = null;
 		if ((event.identity as AppSyncIdentityCognito).username)
 			user = (event.identity as AppSyncIdentityCognito).username;
 
-		let response: any;
+		const payload = { content: event.arguments.content, username: user };
+		const documentId = new ObjectId(event.arguments._id!);
+		const updateResult = await collection.updateOne(
+			{ _id: documentId, username: user },
+			{ $set: payload },
+		);
 
-		const payload = { username: user };
-		console.log('retrieving results');
-		response = await collection.find(payload).toArray();
-		console.log(`results retrieved: ${JSON.stringify(response)}`);
-
-		return successResponse(response);
-		// return response.body;
+		return successResponse(updateResult);
 	} catch (e) {
 		console.log('got error: ' + e);
 		return errorResponse(e as Error);

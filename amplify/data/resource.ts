@@ -11,32 +11,28 @@ const envValues = {
 	DB_NAME: process.env.DB_NAME!,
 };
 const listTodoHandler = defineFunction({
-	entry: './listTodo.ts',
-	timeoutSeconds: 60,
+	entry: 'resolvers/todo/listTodo.ts',
 	environment: {
 		...envValues,
 	},
 });
 
 const addTodoHandler = defineFunction({
-	entry: './addTodo.ts',
-	timeoutSeconds: 60,
+	entry: 'resolvers/todo/addTodo.ts',
 	environment: {
 		...envValues,
 	},
 });
 
 const deleteTodoHandler = defineFunction({
-	entry: './deleteTodo.ts',
-	timeoutSeconds: 60,
+	entry: 'resolvers/todo/deleteTodo.ts',
 	environment: {
 		...envValues,
 	},
 });
 
 const updateTodoHandler = defineFunction({
-	entry: './updateTodo.ts',
-	timeoutSeconds: 60,
+	entry: 'resolvers/todo/updateTodo.ts',
 	environment: {
 		...envValues,
 	},
