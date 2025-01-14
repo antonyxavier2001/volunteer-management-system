@@ -98,7 +98,7 @@ const schema = a.schema({
 
 export type Schema = ClientSchema<typeof schema>;
 
-export const todoData = defineData({
+export const data = defineData({
 	schema,
 	authorizationModes: {
 		defaultAuthorizationMode: 'userPool',
