@@ -1,54 +1,54 @@
-import type { AppSyncIdentityCognito } from 'aws-lambda';
+import type { AppSyncIdentityCognito } from 'aws-lambda'
 
-import type { Schema } from '@/data/resource';
-import { connectToMongodb } from '@/shared/mdbUtils';
-import { ObjectId } from 'mongodb';
+import type { Schema } from '@/data/resource'
+import { connectToMongodb } from '@/shared/mdbUtils'
+import { ObjectId } from 'mongodb'
 
 function successResponse(body: unknown): object {
-	return {
-		statusCode: 200,
-		count: body,
-	};
+    return {
+        statusCode: 200,
+        count: body,
+    }
 }
 function errorResponse(err: Error): object {
-	const errorMessage = err.message;
-	return {
-		statusCode: 400,
-		body: errorMessage,
-		headers: {
-			'Content-Type': 'application/json',
-		},
-	};
+    const errorMessage = err.message
+    return {
+        statusCode: 400,
+        body: errorMessage,
+        headers: {
+            'Content-Type': 'application/json',
+        },
+    }
 }
 
 export const handler: Schema['deleteTodo']['functionHandler'] = async (
-	event,
+    event
 ) => {
-	// console.log("got event: " + JSON.stringify(event));
-	// console.log("got context: " + JSON.stringify(context));
-	// Connect to MongoDB
-	const [client, , collection] = await connectToMongodb();
-	try {
-		console.log('Connected to MongoDB');
-		let user = null;
-		if ((event.identity as AppSyncIdentityCognito).username)
-			user = (event.identity as AppSyncIdentityCognito).username;
+    // console.log("got event: " + JSON.stringify(event));
+    // console.log("got context: " + JSON.stringify(context));
+    // Connect to MongoDB
+    const [client, , collection] = await connectToMongodb()
+    try {
+        console.log('Connected to MongoDB')
+        let user = null
+        if ((event.identity as AppSyncIdentityCognito).username)
+            user = (event.identity as AppSyncIdentityCognito).username
 
-		const id = event.arguments._id!;
+        const id = event.arguments._id!
 
-		// delete where object id and user match
-		const deleteResult = await collection.deleteOne({
-			_id: new ObjectId(id),
-			username: user,
-		});
-		// response = { deleted_count: deleteResult.deletedCount };
+        // delete where object id and user match
+        const deleteResult = await collection.deleteOne({
+            _id: new ObjectId(id),
+            username: user,
+        })
+        // response = { deleted_count: deleteResult.deletedCount };
 
-		return successResponse(deleteResult);
-	} catch (e) {
-		return errorResponse(e as Error);
-	} finally {
-		if (client) {
-			await client.close();
-		}
-	}
-};
+        return successResponse(deleteResult)
+    } catch (e) {
+        return errorResponse(e as Error)
+    } finally {
+        if (client) {
+            await client.close()
+        }
+    }
+}

@@ -6,4 +6,4 @@ HOOKS_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 DIR="$(dirname "$HOOKS_DIR")"
 cd $DIR
 
-npm run lint
+npm run lint-staged
