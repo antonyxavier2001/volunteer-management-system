@@ -4,6 +4,8 @@
   "description": "API for event management with admin authentication",
   "main": "dist/app.js",
   "scripts": {
+    "start": "node server.js",
+  "dev": "nodemon server.ts",
     "start": "node dist/app.js",
     "dev": "nodemon src/app.ts",
     "build": "tsc",
